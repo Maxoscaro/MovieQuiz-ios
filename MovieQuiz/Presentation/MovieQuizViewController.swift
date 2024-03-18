@@ -51,7 +51,7 @@ final class MovieQuizViewController: UIViewController {
             correctAnswer: false),
         QuizQuestion(
             image: "Vivarium",
-            text: "Рейтинг этого фильма больше чем 6?",
+            text: "Рейтинг этого фильма больше чем 7?",
             correctAnswer: false)
     ]
     
