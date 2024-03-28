@@ -17,6 +17,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var alertPresenter: AlertPresenter?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
+    private var statisticService = StatisticServiceImplementation()
     
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -26,6 +27,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory.delegate = self
         questionFactory.requestNextQuestion()
         alertPresenter = AlertPresenter(viewController: self)
+        statisticService = StatisticServiceImplementation()
         }
     
     // MARK: - IBActions
@@ -88,9 +90,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     
     private func showFinalResults() {
-        let message = correctAnswers == questionsAmount ?
-        "Поздравляем, вы ответили на 10 из 10!" :
-        "Вы ответили на \(correctAnswers) из \(questionsAmount), попробуйте ещё раз!"
+        
+        let bestGame = statisticService.bestGame
+     let message = "Ваш результат: \(correctAnswers)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(bestGame.correct)/\(questionsAmount) (\(bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+//        "Поздравляем, вы ответили на 10 из 10!" :
+//        "Вы ответили на \(correctAnswers) из \(questionsAmount), попробуйте ещё раз!"
         
         let alertModel = AlertModel(title: "Этот раунд окончен!",
                                     message: message,
@@ -124,7 +128,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showNextQuestionOrResults() {
+        
         if currentQuestionIndex >= questionsAmount - 1 {
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
             showFinalResults()
         } else {
             currentQuestionIndex += 1

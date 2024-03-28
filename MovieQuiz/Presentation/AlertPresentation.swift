@@ -10,9 +10,6 @@
 
 import UIKit
 
-
-import UIKit
-
 class AlertPresenter {
     private weak var viewController: UIViewController?
     weak var delegate: AlertPresenterDelegate?
