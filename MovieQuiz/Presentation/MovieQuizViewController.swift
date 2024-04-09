@@ -4,13 +4,16 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     // MARK: - IBOutlets
+    
     @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - Properties
+    
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactory = QuestionFactory()
     private var currentQuestion: QuizQuestion?
@@ -20,6 +23,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var statisticService: StatisticService = StatisticServiceImplementation()
     
     // MARK: - Lifecycle Methods
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -138,6 +142,32 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             yesButton.isEnabled = true
             noButton.isEnabled = true
         }
+    }
+    
+    private func hideLoadingIndicator() {
+        
+    }
+    
+    private func showLoadingIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    private func showNetworkError(message: String) {
+        hideLoadingIndicator()
+        
+        let model = AlertModel(title: "Ошибка",
+                               message: message,
+                               buttonText: "Попробовать еще раз") { [weak self] in
+            guard let self = self else { return }
+            
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            
+            self.questionFactory.requestNextQuestion()
+        }
+        
+        alertPresenter?.presentAlert(with: model)
     }
 }
 
