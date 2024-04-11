@@ -7,20 +7,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private weak var yesButton: UIButton!
-    @IBOutlet private var imageView: UIImageView!
-    @IBOutlet private var textLabel: UILabel!
-    @IBOutlet private var counterLabel: UILabel!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textLabel: UILabel!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - Properties
     
     private let questionsAmount: Int = 10
-    private var questionFactory: QuestionFactory = QuestionFactory()
+    private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertPresenter: AlertPresenter?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
-    private var statisticService: StatisticService = StatisticServiceImplementation()
+    private var statisticService = StatisticServiceImplementation()
+    private let moviesLoader = MoviesLoader()
     
     // MARK: - Lifecycle Methods
     
@@ -28,11 +29,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         super.viewDidLoad()
         
-        questionFactory.delegate = self
-        questionFactory.requestNextQuestion()
+        questionFactory = QuestionFactory(moviesLoader: moviesLoader, delegate: self)
         alertPresenter = AlertPresenter(viewController: self)
         statisticService = StatisticServiceImplementation()
-        }
+        showLoadingIndicator()
+        questionFactory?.loadData()
+        
+    }
     
     // MARK: - IBActions
     
@@ -76,11 +79,28 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
+    
+    // MARK: - Data Loading
+    
+    func didLoadDataFromServer() {
+        hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailLoadData(with error: any Error) {
+        showNetworkError(message: error.localizedDescription)
+    }
+    func hideLoadingIndicatorWhenTheImageIsLoaded() {
+        hideLoadingIndicator()
+    }
+    
     // MARK: - Private Methods
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        let questionStep = QuizStepViewModel(image: UIImage(named: model.image) ?? UIImage(), question: model.text, questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
-        return questionStep
+        return QuizStepViewModel(
+            image: UIImage(data: model.image) ?? UIImage(),
+            question: model.text,
+            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
     }
     
     private func show(quiz step: QuizStepViewModel) {
@@ -96,9 +116,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func showFinalResults() {
         
         let bestGame = statisticService.bestGame
-     let message = "Ваш результат: \(correctAnswers)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(bestGame.correct)/\(questionsAmount) (\(bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
-//        "Поздравляем, вы ответили на 10 из 10!" :
-//        "Вы ответили на \(correctAnswers) из \(questionsAmount), попробуйте ещё раз!"
+        let message = "Ваш результат: \(correctAnswers)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(bestGame.correct)/\(questionsAmount) (\(bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        
         
         let alertModel = AlertModel(title: "Этот раунд окончен!",
                                     message: message,
@@ -114,7 +133,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         correctAnswers = 0
         yesButton.isEnabled = true
         noButton.isEnabled = true
-        questionFactory.requestNextQuestion()
+        questionFactory?.requestNextQuestion()
     }
     
     private func showAnswerResult(isCorrect: Bool) {
@@ -127,6 +146,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in guard let self = self else { return }
+            
             self.showNextQuestionOrResults()
         }
     }
@@ -138,17 +158,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             showFinalResults()
         } else {
             currentQuestionIndex += 1
-            questionFactory.requestNextQuestion()
+            showLoadingIndicator()
+            questionFactory?.requestNextQuestion()
+            
             yesButton.isEnabled = true
             noButton.isEnabled = true
         }
     }
     
     private func hideLoadingIndicator() {
-        
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
     }
     
     private func showLoadingIndicator() {
+        
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
@@ -156,7 +180,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func showNetworkError(message: String) {
         hideLoadingIndicator()
         
-        let model = AlertModel(title: "Ошибка",
+        let model = AlertModel(title: "Ошибка!",
                                message: message,
                                buttonText: "Попробовать еще раз") { [weak self] in
             guard let self = self else { return }
@@ -164,7 +188,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
             
-            self.questionFactory.requestNextQuestion()
+            self.questionFactory?.loadData()
         }
         
         alertPresenter?.presentAlert(with: model)
