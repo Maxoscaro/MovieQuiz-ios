@@ -20,7 +20,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var alertPresenter: AlertPresenter?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
-    private var statisticService = StatisticServiceImplementation()
+    private var statisticService: StatisticService = StatisticServiceImplementation()
     private let moviesLoader = MoviesLoader()
     
     // MARK: - Lifecycle Methods
@@ -83,13 +83,31 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Data Loading
     
     func didLoadDataFromServer() {
+       
         hideLoadingIndicator()
         questionFactory?.requestNextQuestion()
     }
     
     func didFailLoadData(with error: any Error) {
+//        var errorMessage = "Невозможно загрузить данные"
+//        //showNetworkError(message: error.localizedDescription)
+//        if let networkError = error as? NetworkError {
+//            switch networkError {
+//            case .noInternetConnection:
+//                errorMessage = "Отсутствует интернет подключение"
+//            case .requestTimedOut:
+//                errorMessage = "Превышено время ожидания от сервера"
+//            case .emptyData:
+//                errorMessage = "Данные не были получены"
+//            case .tooManyRequests:
+//                errorMessage = "Превышен лимит запросов к API"
+//            case .unknownError:
+//                errorMessage = "Неизвестная ошибка"
+//            }
+//        }
         showNetworkError(message: error.localizedDescription)
     }
+    
     func hideLoadingIndicatorWhenTheImageIsLoaded() {
         hideLoadingIndicator()
     }
@@ -167,13 +185,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func hideLoadingIndicator() {
-        activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
     }
     
     private func showLoadingIndicator() {
-        
-        activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
     
