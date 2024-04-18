@@ -89,22 +89,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     func didFailLoadData(with error: any Error) {
-//        var errorMessage = "Невозможно загрузить данные"
-//        //showNetworkError(message: error.localizedDescription)
-//        if let networkError = error as? NetworkError {
-//            switch networkError {
-//            case .noInternetConnection:
-//                errorMessage = "Отсутствует интернет подключение"
-//            case .requestTimedOut:
-//                errorMessage = "Превышено время ожидания от сервера"
-//            case .emptyData:
-//                errorMessage = "Данные не были получены"
-//            case .tooManyRequests:
-//                errorMessage = "Превышен лимит запросов к API"
-//            case .unknownError:
-//                errorMessage = "Неизвестная ошибка"
-//            }
-//        }
+//     
         showNetworkError(message: error.localizedDescription)
     }
     
