@@ -97,6 +97,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         hideLoadingIndicator()
     }
     
+
+ 
+    
     // MARK: - Private Methods
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
@@ -118,17 +121,27 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showFinalResults() {
         
+       
         let bestGame = statisticService.bestGame
         let message = "Ваш результат: \(correctAnswers)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(bestGame.correct)/\(questionsAmount) (\(bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
         
         
         let alertModel = AlertModel(title: "Этот раунд окончен!",
                                     message: message,
-                                    buttonText: "Сыграть еще раз") { [weak self] in
+                                    buttonText: "Сыграть еще раз", accessibilityIndicator: "Game results") { [weak self] in
             self?.restartQuiz()
+            
         }
-        
+      
         alertPresenter?.presentAlert(with: alertModel)
+        
+    }
+    
+    // MARK: - Show Alert
+    
+   internal func presentAlert(with model: UIAlertController) {
+        self.present(model, animated: true)
+        model.view.accessibilityIdentifier = "Game results"
     }
     
     private func restartQuiz() {
@@ -182,7 +195,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         let model = AlertModel(title: "Ошибка!",
                                message: message,
-                               buttonText: "Попробовать еще раз") { [weak self] in
+                               buttonText: "Попробовать еще раз", accessibilityIndicator: "Network error") { [weak self] in
             guard let self = self else { return }
             
             self.currentQuestionIndex = 0

@@ -8,7 +8,6 @@
 import Foundation
 
 import XCTest
-
 @testable import MovieQuiz
 
 func testGetValueInRange() throws { // тест на успешное взятие элемента по индексу
