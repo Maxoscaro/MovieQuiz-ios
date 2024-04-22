@@ -36,6 +36,7 @@
 		B5DB7F742BD0FC98009A4F75 /* ArrayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DB7F732BD0FC98009A4F75 /* ArrayTest.swift */; };
 		B5DE990B2BD10A3700F800DC /* MoviesLoaderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DE990A2BD10A3700F800DC /* MoviesLoaderTest.swift */; };
 		B5DE99132BD111C900F800DC /* MovieQuizUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DE99122BD111C900F800DC /* MovieQuizUITests.swift */; };
+		B5EED93C2BD6A9EA009CC4DC /* MovieQuizPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EED93B2BD6A9EA009CC4DC /* MovieQuizPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		B5DE99102BD111C900F800DC /* MovieQuizUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieQuizUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5DE99122BD111C900F800DC /* MovieQuizUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizUITests.swift; sourceTree = "<group>"; };
 		B5ECC1862BCAA1F5007DC5F1 /* MovieQuizTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieQuizTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5EED93B2BD6A9EA009CC4DC /* MovieQuizPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 				AD1ABAB52831907B00B3E448 /* MovieQuizViewController.swift */,
 				AD1ABAB72831907B00B3E448 /* Main.storyboard */,
 				B54C37D82BB19A5D0044AC8B /* AlertPresenter.swift */,
+				B5EED93B2BD6A9EA009CC4DC /* MovieQuizPresenter.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5EED93C2BD6A9EA009CC4DC /* MovieQuizPresenter.swift in Sources */,
 				B5367CE12BC4223F0053675A /* NetworkClient.swift in Sources */,
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
 				B526ABDC2BAC8B2B0096F86C /* QuizResultsViewModel.swift in Sources */,
