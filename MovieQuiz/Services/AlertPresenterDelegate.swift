@@ -7,5 +7,5 @@
 
 import Foundation
 protocol AlertPresenterDelegate: AnyObject {
-    func alertActionCompleted()
+    func presentAlert(_ model: AlertModel)
 }

@@ -13,15 +13,15 @@ import UIKit
 class AlertPresenter {
     
    
-    private weak var viewController: UIViewController?
+    private weak var delegate: AlertPresenterDelegate?
 
-    init(viewController: UIViewController) {
-        self.viewController = viewController
+    init(delegate: AlertPresenterDelegate?) {
+        self.delegate = delegate
     }
 
     
     
-    func presentAlert(with model: AlertModel) {
+    func presentAlert(_ model: AlertModel) {
         let alert = UIAlertController(title: model.title, message: model.message, preferredStyle: .alert)
         alert.view.accessibilityIdentifier = model.accessibilityIndicator
         
@@ -30,7 +30,7 @@ class AlertPresenter {
             
         }
         alert.addAction(action)
-        viewController?.present(alert, animated: true, completion: nil)
+        delegate?.presentAlert(model)
     
     }
 }

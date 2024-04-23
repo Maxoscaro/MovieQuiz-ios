@@ -89,7 +89,7 @@ final class MovieQuizViewController: UIViewController {
             
         }
       
-        presenter.presentAlert(with: alertModel)
+        presenter.presentAlert(alertModel)
         
     }
     
@@ -131,7 +131,7 @@ final class MovieQuizViewController: UIViewController {
      func showNetworkError(message: String) {
         hideLoadingIndicator()
         
-         presenter.presentAlert(with: AlertModel(title: "Ошибка!",
+         presenter.presentAlert(AlertModel(title: "Ошибка!",
                                message: message,
                                buttonText: "Попробовать еще раз", accessibilityIndicator: "Network error") { [weak self] in
             guard let self = self else { return }

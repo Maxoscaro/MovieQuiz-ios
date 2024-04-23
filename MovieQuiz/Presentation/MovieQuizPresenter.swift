@@ -8,7 +8,7 @@ import UIKit
 
 import Foundation
 
-final class MovieQuizPresenter: QuestionFactoryDelegate  {
+final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate  {
     
     //MARK: - Private properties
     
@@ -31,7 +31,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate  {
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
-        alertPresenter = AlertPresenter(viewController: self)
+        alertPresenter = AlertPresenter(delegate: self)
         viewController.showLoadingIndicator()
     }
     
@@ -54,6 +54,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate  {
         
         proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
+    
     
     // MARK: - Quiz
     
@@ -141,8 +142,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate  {
         return resultMessage
     }
     
-    func presentAlert(with model: AlertModel) {
-        alertPresenter?.presentAlert(with: model)
+    func presentAlert(_ model: AlertModel) {
+        alertPresenter?.presentAlert( model)
     }
     
     //MARK: - QuestionFactoryDelegate
@@ -160,7 +161,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate  {
         viewController?.hideLoadingIndicator()
     }
     
-    
+    func presentAlert() -> UIViewController {
+        viewController ?? MovieQuizViewController()
+    }
     
     
     
