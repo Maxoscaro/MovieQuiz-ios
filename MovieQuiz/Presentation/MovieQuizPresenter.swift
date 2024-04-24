@@ -15,7 +15,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
    
     private var questionFactory: QuestionFactoryProtocol?
     private weak var viewController: MovieQuizViewController?
-    
     private var alertPresenter: AlertPresenter?
     private var currentQuestion: QuizQuestion?
     private let questionsAmount: Int = 10
@@ -25,10 +24,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
    
     // MARK: - Initialization
     
-    init(viewController: MovieQuizViewController) {
-        self.viewController = viewController
+    init(viewController: MovieQuizViewControllerProtocol) {
+        self.viewController = viewController as? MovieQuizViewController
     
-        
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         guard let questionFactory = questionFactory as? QuestionFactory else { return }
         questionFactory.loadData()
@@ -162,6 +160,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     }
     
     //MARK: - QuestionFactoryDelegate
+    
     func didLoadDataFromServer() {
         viewController?.hideLoadingIndicatorWhenTheImageIsLoaded()
         questionFactory?.requestNextQuestion()
@@ -177,6 +176,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     }
     
     //MARK: - AlertPresenterDelegate
+    
     func alertPresenterTapButton(restart: Bool) {
       if restart {
         restartGame()

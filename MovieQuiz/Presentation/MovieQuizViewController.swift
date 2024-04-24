@@ -1,7 +1,7 @@
 import UIKit
 
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     
     // MARK: - IBOutlets
     
@@ -13,11 +13,8 @@ final class MovieQuizViewController: UIViewController {
     
     // MARK: - Properties
     
-    
     private var presenter: MovieQuizPresenter!
- 
-
-  
+    
     // MARK: - Lifecycle Methods
     
     override func viewDidLoad() {
@@ -26,102 +23,22 @@ final class MovieQuizViewController: UIViewController {
         
         imageView.layer.cornerRadius = 20
         presenter = MovieQuizPresenter(viewController: self)
-       showLoadingIndicator()
-       
-        
+        showLoadingIndicator()
     }
     
     // MARK: - IBActions
- 
+    
     @IBAction private func yesbuttonClicked(_ sender: UIButton) {
-            
         presenter.yesbuttonClicked()
-        }
-   
+    }
+    
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-            
-            presenter.noButtonClicked()
-        }
- 
-    
-    
-   
-    
-    
-    // MARK: - Data Loading
-    
-    
-    
-    
-    func hideLoadingIndicatorWhenTheImageIsLoaded() {
-        hideLoadingIndicator()
+        presenter.noButtonClicked()
     }
     
-
- 
+    // MARK: - ActivityIndicator
     
-    // MARK: - Private Methods
-    
-    
-    func show(quiz step: QuizStepViewModel) {
-        
-        imageView.layer.borderColor = UIColor.clear.cgColor
-        imageView.image = step.image
-        textLabel.text = step.question
-        counterLabel.text = step.questionNumber
-    
-    }
-    
-    
-    
-    
-    func showFinalResults() {
-        
-       
-        let message = presenter.makeResultsMessage()
-
-        
-        
-        let alertModel = AlertModel(title: "Этот раунд окончен!",
-                                    message: message,
-                                    buttonText: "Сыграть еще раз", accessibilityIndicator: "Game results") { [weak self]  in
-            guard let self = self else { return }
-            self.presenter.restartGame()
-            
-        }
-      
-        presenter.presentAlert(alertModel)
-        
-    }
-    
-    // MARK: - Show Alert
-    
-   internal func presentAlert(with model: UIAlertController) {
-        self.present(model, animated: true)
-        model.view.accessibilityIdentifier = "Game results"
-    }
-    
-//    private func restartQuiz() {
-//        
-//        presenter.restartGame()
-//        presenter.correctAnswers = 0
-//        yesButton.isEnabled = true
-//        noButton.isEnabled = true
-//        
-//    }
-    
-    func highlightImageBorder(isCorrectAnswer: Bool) {
-            imageView.layer.masksToBounds = true
-            imageView.layer.borderWidth = 8
-        imageView.layer.cornerRadius = 20
-            imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        }
-    
-
-    
-    
-    
-     func hideLoadingIndicator() {
+    func hideLoadingIndicator() {
         activityIndicator.stopAnimating()
     }
     
@@ -129,22 +46,71 @@ final class MovieQuizViewController: UIViewController {
         activityIndicator.startAnimating()
     }
     
-     func showNetworkError(message: String) {
+    func hideLoadingIndicatorWhenTheImageIsLoaded() {
+        hideLoadingIndicator()
+    }
+    
+    // MARK: - Methods
+    
+    func show(quiz step: QuizStepViewModel) {
+        
+        imageView.layer.borderColor = UIColor.clear.cgColor
+        imageView.image = step.image
+        textLabel.text = step.question
+        counterLabel.text = step.questionNumber
+        
+    }
+    
+    func highlightImageBorder(isCorrectAnswer: Bool) {
+        
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 8
+        imageView.layer.cornerRadius = 20
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+    }
+    
+    func showFinalResults() {
+        
+        let message = presenter.makeResultsMessage()
+        let alertModel = AlertModel(title: "Этот раунд окончен!",
+                                    message: message,
+                                    buttonText: "Сыграть еще раз", accessibilityIndicator: "Game results") { [weak self]  in
+            guard let self = self else { return }
+            self.presenter.restartGame()
+            }
+        
+        presenter.presentAlert(alertModel)
+    }
+    
+    func showNetworkError(message: String) {
         hideLoadingIndicator()
         
-         presenter.presentAlert(AlertModel(title: "Ошибка!",
-                               message: message,
-                               buttonText: "Попробовать еще раз", accessibilityIndicator: "Network error") { [weak self] in
+        presenter.presentAlert(AlertModel(title: "Ошибка!",
+                                          message: message,
+                                          buttonText: "Попробовать еще раз", accessibilityIndicator: "Network error") { [weak self] in
             guard let self = self else { return }
             
             self.presenter.restartGame()
-            
-            
-          
-        })
-        
-       
+            })
+        }
+    
+    // MARK: - AlertIdentifier
+    
+    internal func presentAlert(with model: UIAlertController) {
+        self.present(model, animated: true)
+        model.view.accessibilityIdentifier = "Game results"
     }
 }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+
 
 
