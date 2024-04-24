@@ -30,7 +30,7 @@ class AlertPresenter {
             
         }
         alert.addAction(action)
-        delegate?.presentAlert(model)
+        delegate?.viewControllerAlertPresenting().present(alert, animated: true)
     
     }
 }

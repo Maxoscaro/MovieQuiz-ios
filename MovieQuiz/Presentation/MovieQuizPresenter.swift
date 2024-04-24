@@ -12,7 +12,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     
     //MARK: - Private properties
     
-    private let statisticService: StatisticService!
+   
     private var questionFactory: QuestionFactoryProtocol?
     private weak var viewController: MovieQuizViewController?
     
@@ -21,23 +21,24 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     private let questionsAmount: Int = 10
     private var currentQuestionIndex: Int = 0
     private var correctAnswers: Int = 0
-    
+    private let statisticService = StatisticServiceImplementation()
+   
     // MARK: - Initialization
     
     init(viewController: MovieQuizViewController) {
         self.viewController = viewController
-        
-        statisticService = StatisticServiceImplementation()
+    
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        questionFactory?.loadData()
+        guard let questionFactory = questionFactory as? QuestionFactory else { return }
+        questionFactory.loadData()
         alertPresenter = AlertPresenter(delegate: self)
         viewController.showLoadingIndicator()
     }
     
     // MARK: - Button Actions
     
-    func yesButtonClicked() {
+    func yesbuttonClicked() {
         didAnswer(isYes: true)
     }
     
@@ -46,6 +47,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     }
     
     func didAnswer(isYes: Bool) {
+        disableButtonsInteraction()
         guard let currentQuestion = currentQuestion else {
             return
         }
@@ -55,6 +57,13 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
         proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     
+    private func disableButtonsInteraction() {
+      viewController?.buttonsStack.isUserInteractionEnabled = false
+    }
+    
+    private func enableButtonsInteraction() {
+      viewController?.buttonsStack.isUserInteractionEnabled = true
+    }
     
     // MARK: - Quiz
     
@@ -81,17 +90,16 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     func proceedToNextQuestionOrResults() {
         
         if self.isLastQuestion() {
-            statisticService.store(correct: correctAnswers, total: questionsAmount)
+       
             viewController?.showFinalResults()
         } else {
             self.switchToNextQuestion()
             viewController?.showLoadingIndicator()
             questionFactory?.requestNextQuestion()
             
-            //            yesButton.isEnabled = true
-            //            noButton.isEnabled = true
         }
     }
+    
     func proceedWithAnswer(isCorrect: Bool) {
         didAnswer(isCorrectAnswer: isCorrect)
         
@@ -99,7 +107,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-            self.proceedToNextQuestionOrResults()
+            enableButtonsInteraction()
+            proceedToNextQuestionOrResults()
         }
     }
     
@@ -127,19 +136,25 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     }
     
     func makeResultsMessage() -> String {
+        
         statisticService.store(correct: correctAnswers, total: questionsAmount)
         
         let bestGame = statisticService.bestGame
         
         let totalPlaysCountLine = "Количество сыграных квизов: \(statisticService.gamesCount)"
-        let currentGameResultLine = "Вашш результат: \(correctAnswers)\\\(questionsAmount)"
+        let currentGameResultLine = "Ваш результат: \(correctAnswers)\\\(questionsAmount)"
         let bestGameInfoLine = "Рекорд: \(bestGame.correct)\\\(bestGame.total)"
         + "(\(bestGame.date.dateTimeString))"
         let averageAccuracyLine = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
         let resultMessage = [
-            currentGameResultLine, totalPlaysCountLine, bestGameInfoLine, averageAccuracyLine].joined(separator: "/n")
+            currentGameResultLine, totalPlaysCountLine, bestGameInfoLine, averageAccuracyLine].joined(separator: "\n")
         
         return resultMessage
+    }
+    
+    func loadQuestionData() {
+        guard let questionFactory = questionFactory as? QuestionFactory else { return }
+        questionFactory.loadData()
     }
     
     func presentAlert(_ model: AlertModel) {
@@ -161,17 +176,18 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
         viewController?.hideLoadingIndicator()
     }
     
-    func presentAlert() -> UIViewController {
-        viewController ?? MovieQuizViewController()
+    //MARK: - AlertPresenterDelegate
+    func alertPresenterTapButton(restart: Bool) {
+      if restart {
+        restartGame()
+      } else {
+        questionFactory?.requestNextQuestion()
+      }
+      
+      viewController?.hideLoadingIndicator()
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    func viewControllerAlertPresenting() -> UIViewController {
+      viewController ?? MovieQuizViewController()
+    }
 }

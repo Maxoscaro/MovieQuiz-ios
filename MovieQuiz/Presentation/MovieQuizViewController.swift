@@ -5,8 +5,7 @@ final class MovieQuizViewController: UIViewController {
     
     // MARK: - IBOutlets
     
-    @IBOutlet private weak var noButton: UIButton!
-    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet weak var buttonsStack: UIStackView!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
@@ -34,9 +33,9 @@ final class MovieQuizViewController: UIViewController {
     
     // MARK: - IBActions
  
-    @IBAction private func yesButtonClicked(_ sender: UIButton) {
+    @IBAction private func yesbuttonClicked(_ sender: UIButton) {
             
-        presenter.yesButtonClicked()
+        presenter.yesbuttonClicked()
         }
    
     @IBAction private func noButtonClicked(_ sender: UIButton) {
@@ -72,6 +71,8 @@ final class MovieQuizViewController: UIViewController {
         counterLabel.text = step.questionNumber
     
     }
+    
+    
     
     
     func showFinalResults() {

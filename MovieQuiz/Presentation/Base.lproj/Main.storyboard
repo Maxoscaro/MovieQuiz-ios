@@ -126,12 +126,11 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="ButtonsStack" destination="7ai-Fm-LnG" id="rd9-HC-lFg"/>
                         <outlet property="activityIndicator" destination="1F4-9x-QKK" id="RdV-cL-aQF"/>
                         <outlet property="counterLabel" destination="CA5-lG-j9g" id="OIA-Gj-2Ar"/>
                         <outlet property="imageView" destination="zoR-T1-aS1" id="oQN-5M-Pj7"/>
-                        <outlet property="noButton" destination="XDD-G1-9nr" id="Bhy-hE-1iU"/>
                         <outlet property="textLabel" destination="h9w-KW-PRu" id="BdA-Si-6oC"/>
-                        <outlet property="yesButton" destination="gza-Yu-jhG" id="w1y-TP-d6y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
