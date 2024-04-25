@@ -6,6 +6,10 @@
 //
 
 import Foundation
+import UIKit
+
 protocol AlertPresenterDelegate: AnyObject {
-    func alertActionCompleted()
+    func alertPresenterTapButton(restart: Bool)
+      func viewControllerAlertPresenting() -> UIViewController
+    func presentAlert(_ model: AlertModel)
 }
