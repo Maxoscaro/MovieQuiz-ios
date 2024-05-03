@@ -19,8 +19,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertPresenterDelegate 
     private var currentQuestion: QuizQuestion?
     private let questionsAmount: Int = 10
     private var currentQuestionIndex: Int = 0
-    private var correctAnswers: Int = 0
     private let statisticService = StatisticServiceImplementation()
+    private var correctAnswers: Int = 0
+    
    
     // MARK: - Initialization
     
